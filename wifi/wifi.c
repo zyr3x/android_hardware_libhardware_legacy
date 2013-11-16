@@ -298,7 +298,25 @@ int wifi_load_driver()
     usleep(200000);
 #endif
 
+	ALOGW("DRIVER MODULE ARG");
+	#ifdef HUAWEI_WIFI
+		char wlan_mac[PROPERTY_VALUE_MAX];
+		char serialno[PROPERTY_VALUE_MAX];
+		char huawei_module_arg[256];
+		//custome mac
+		property_get("persist.wlan.mac", wlan_mac, "");
+		property_get("ro.serialno", serialno, "f6r6rd1212541368");
+
+		if(strlen(wlan_mac) == 0)		
+			snprintf(huawei_module_arg, sizeof(huawei_module_arg), "%s wlan_mac=%02x%02x%02x%02x%02x%02x", DRIVER_MODULE_ARG, serialno[0], serialno[1], serialno[2], serialno[3], serialno[4], serialno[5]);
+		else
+			snprintf(huawei_module_arg, sizeof(huawei_module_arg), "%s wlan_mac=%s", DRIVER_MODULE_ARG, wlan_mac);	
+
+		ALOGW("HUAWEI WIFI DRIVER MODULE ARG: %s", huawei_module_arg);
+		if (insmod(DRIVER_MODULE_PATH, huawei_module_arg) < 0) {
+	#else
     if (insmod(DRIVER_MODULE_PATH, DRIVER_MODULE_ARG) < 0) {
+	#endif
 #endif
 
 #ifdef WIFI_EXT_MODULE_NAME
