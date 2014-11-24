@@ -345,7 +345,7 @@ int wifi_load_driver()
 
 		if (is_modem_available()!=1) {
 			ALOGW("HUAWEI WIFI DRIVER MODULE:  Modem is not available, load ro.serialno");
-			property_get("ro.serialno", serialno, "f6r121");
+			property_get("ro.boot.serialno", serialno, "f6r121");
 			
 		} else {
 			get_wlan_mac(hwmac);
