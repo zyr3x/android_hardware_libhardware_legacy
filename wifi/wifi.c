@@ -213,6 +213,9 @@ char* get_samsung_wifi_type()
     if (strncmp(buf, "semcove", 7) == 0)
         return "_semcove";
 
+    if (strncmp(buf, "semcosh", 7) == 0)
+        return "_semcosh";
+
     return NULL;
 }
 #endif
@@ -320,16 +323,13 @@ int wifi_load_driver()
     char module_arg2[256];
 
 #ifdef SAMSUNG_WIFI
-#ifdef WIFI_DRIVER_MODULE_AP_ARG
-    if (wifi_mode == 1) {
-        snprintf(module_arg2, sizeof(module_arg2), DRIVER_MODULE_AP_ARG);
-    } else {
-        snprintf(module_arg2, sizeof(module_arg2), DRIVER_MODULE_ARG);
-    }
-#else
     char* type = get_samsung_wifi_type();
-    snprintf(module_arg2, sizeof(module_arg2), "%s%s", DRIVER_MODULE_ARG, type == NULL ? "" : type);
-#endif
+
+    if (wifi_mode == 1) {
+        snprintf(module_arg2, sizeof(module_arg2), "%s%s", DRIVER_MODULE_AP_ARG, type == NULL ? "" : type);
+    } else {
+        snprintf(module_arg2, sizeof(module_arg2), "%s%s", DRIVER_MODULE_ARG, type == NULL ? "" : type);
+    }
 
     if (insmod(DRIVER_MODULE_PATH, module_arg2) < 0) {
 #else
@@ -985,9 +985,14 @@ int wifi_supplicant_connection_active()
 int wifi_ctrl_recv(char *reply, size_t *reply_len)
 {
     int res;
-    int ctrlfd = wpa_ctrl_get_fd(monitor_conn);
+    int ctrlfd;
     struct pollfd rfds[2];
 
+    if (monitor_conn == NULL) {
+        ALOGE("%s: monitor_conn is NULL\n", __func__);
+        return -2;
+    }
+    ctrlfd = wpa_ctrl_get_fd(monitor_conn);
     memset(rfds, 0, 2 * sizeof(struct pollfd));
     rfds[0].fd = ctrlfd;
     rfds[0].events |= POLLIN;
