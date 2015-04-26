@@ -48,4 +48,17 @@ ifeq ($(BOARD_HAVE_SAMSUNG_WIFI),true)
 LOCAL_CFLAGS += -DSAMSUNG_WIFI
 endif
 
+ifeq ($(BOARD_HAVE_HUAWEI_WIFI),true)
+    LOCAL_CFLAGS += -DHUAWEI_WIFI
+endif
+
 LOCAL_SHARED_LIBRARIES += libnetutils
+
+# Proprietary
+LOCAL_SHARED_LIBRARIES += liboncrpc
+$(shell mkdir -p $(OUT)/obj/SHARED_LIBRARIES/liboncrpc_intermediates/)
+$(shell touch $(OUT)/obj/SHARED_LIBRARIES/liboncrpc_intermediates/export_includes)
+
+LOCAL_SHARED_LIBRARIES += libnv
+$(shell mkdir -p $(OUT)/obj/SHARED_LIBRARIES/libnv_intermediates/)
+$(shell touch $(OUT)/obj/SHARED_LIBRARIES/libnv_intermediates/export_includes)
