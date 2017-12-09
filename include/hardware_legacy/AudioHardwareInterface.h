@@ -131,6 +131,11 @@ public:
     }
 #endif
 
+    /**
+     * Return a recent count of the number of audio frames presented to an external observer.
+     */
+    virtual status_t    getPresentationPosition(uint64_t *frames, struct timespec *timestamp) = 0;
+
 };
 
 /**
@@ -288,7 +293,21 @@ public:
     /**This method dumps the state of the audio hardware */
     virtual status_t dumpState(int fd, const Vector<String16>& args) = 0;
 
+    virtual status_t setMasterMute(bool muted) = 0;
+
     static AudioHardwareInterface* create();
+
+    virtual int createAudioPatch(unsigned int num_sources,
+                               const struct audio_port_config *sources,
+                               unsigned int num_sinks,
+                               const struct audio_port_config *sinks,
+                               audio_patch_handle_t *handle) = 0;
+
+    virtual int releaseAudioPatch(audio_patch_handle_t handle) = 0;
+
+    virtual int getAudioPort(struct audio_port *port) = 0;
+
+    virtual int setAudioPortConfig(const struct audio_port_config *config) = 0;
 
 protected:
 
